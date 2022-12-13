@@ -2,7 +2,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from sqlalchemy.orm import relationship, scoped_session, sessionmaker
+from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 
 app = Flask(__name__)
@@ -100,3 +100,5 @@ class StudioFilms(Base):
 
     def __repr__(self):
         return f'<Author: {self.age}>'
+
+# from
