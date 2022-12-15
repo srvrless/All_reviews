@@ -24,6 +24,13 @@ class RegisterForm(FlaskForm):
     submit = SubmitField(label='Create Account')
 
 
+class LoginForm(FlaskForm):
+    username = StringField(label='User Name:', validators=[Length(min=2, max=30), DataRequired()])
+    # email_address = StringField(label='Email Address:', validators=[Email(), DataRequired()])
+    password = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
+    submit = SubmitField(label='Login')
+
+
 class AddBookForm(FlaskForm):
     title = StringField(label='Title:', validators=[Length(min=4, max=30), DataRequired()])
     description = StringField(label='Description:', validators=[Length(min=1, max=1024), DataRequired()])

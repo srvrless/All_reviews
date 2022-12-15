@@ -1,14 +1,15 @@
 from flask import request, render_template, Blueprint, redirect, url_for, flash
-from flask_login import login_user
-from app.forms import RegisterForm, AddBookForm
-from app.models import User, Book
+from flask_login import login_user, login_required, logout_user
+from app.forms import RegisterForm, AddBookForm, LoginForm
+from app.models import User, Book, bcrypt
 from app import db
 
 main = Blueprint("main", __name__)
 
 
 @main.route('/')
-@main.route("/home")
+@main.route("/home", methods=['GET', 'POST'])
+@login_required
 def home_page():
     return render_template('public/Base.html')
 
@@ -32,18 +33,40 @@ def register_page():
     return render_template('public/register.html', form=form)
 
 
+@main.route('/login', methods=['GET', 'POST'])
+def login_page():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db.session.query(User).filter_by(username=form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                flash(f'You are logged in', category='success')
+                return redirect(url_for('main.home_page'))
+        flash(f'There was an error with login a user: Wrong username or password', category='danger')
+    if form.errors != {}:
+        for err_msg in form.errors.values():
+            flash(f'There was an error with login a user: {err_msg}', category='danger')
+    return render_template('public/login.html', form=form)
+
+
 @main.route("/games")
-def games_reviews():
-    return "<p>Games, coming soon...</p>"
+def games_page():
+    return render_template('public/games.html')
+
+
+@main.route("/books")
+def books_page():
+    return render_template('public/books.html')
 
 
 @main.route("/films")
-def films_reviews():
-    return "<p>Films, coming soon...</p>"
+def films_page():
+    return render_template('public/films.html')
 
 
-@main.route('/create/', methods=('GET', 'POST'))
-def create():
+@main.route('/create/', methods=['GET', 'POST'])
+def add_book():
     form = AddBookForm()
     if form.validate_on_submit():
         Book_create = Book(title=form.title.data,
@@ -59,6 +82,13 @@ def create():
 
     if form.errors != {}:
         for err_msg in form.errors.values():
-            flash(f'There was an error with creating a user: {err_msg}', category='danger')
+            flash(f'There was an error with creating a book: {err_msg}', category='danger')
 
-    return render_template('public/create_book.html', form=form)
+    return render_template('admin/create_book.html', form=form)
+
+
+@main.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.login_page'))

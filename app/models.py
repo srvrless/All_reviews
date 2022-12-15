@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 
@@ -16,16 +16,6 @@ class User(Base, UserMixin):
     username = Column(String(length=30), nullable=False, unique=True)
     email_address = Column(String(length=50), nullable=False, unique=True)
     password_hash = Column(String(length=60), nullable=False)
-    budget = Column(Integer(), nullable=False, default=1000)
-
-    # items = relationship('Book', backref='owned_user', lazy=True)
-
-    @property
-    def prettier_budget(self):
-        if len(str(self.budget)) >= 4:
-            return f'{str(self.budget)[:-3]},{str(self.budget)[-3:]}$'
-        else:
-            return f"{self.budget}$"
 
     @property
     def password(self):
@@ -53,15 +43,15 @@ class Book(Base):
     description = Column(String(1024), nullable=False)
     author = Column(String(30), nullable=False)
     created_at = Column(Integer(), nullable=False)
-    # authors = relationship('AuthorBooks', backref='Book')
+    authors = relationship('AuthorBooks', backref='Book')
 
 
-# class AuthorBooks(Base):
-#     __tablename__ = 'Authors'
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String(20))
-#     age = Column(Integer)
-#     book_id = Column(Integer, ForeignKey('Book.id'))
+class AuthorBooks(Base):
+    __tablename__ = 'Authors'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(20))
+    age = Column(Integer)
+    book_id = Column(Integer, ForeignKey('Book.id'))
 
 
 #
@@ -100,5 +90,3 @@ class StudioFilms(Base):
 
     def __repr__(self):
         return f'<Author: {self.age}>'
-
-# from
