@@ -23,7 +23,6 @@ class User(Base, UserMixin):
 
     @password.setter
     def password(self, plain_text_password):
-
         self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
 
     def check_password_correction(self, attempted_password):
@@ -43,50 +42,21 @@ class Book(Base):
     description = Column(String(1024), nullable=False)
     author = Column(String(30), nullable=False)
     created_at = Column(Integer(), nullable=False)
-    authors = relationship('AuthorBooks', backref='Book')
 
 
-class AuthorBooks(Base):
-    __tablename__ = 'Authors'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(20))
-    age = Column(Integer)
-    book_id = Column(Integer, ForeignKey('Book.id'))
-
-
-#
 class Game(Base):
     __tablename__ = 'Game'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(20))
-    description = Column(String(1024))
-    studiogames = relationship('StudioGames', backref='Game')
-
-
-class StudioGames(Base):
-    __tablename__ = 'StudiesGame'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(20))
-    base_in = Column(Integer)
-    owners = Column(String(40))
-    game_id = Column(Integer, ForeignKey('Game.id'))
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(50), nullable=False)
+    description = Column(String(1024), nullable=False)
+    studio = Column(String(30), nullable=False)
+    created_at = Column(Integer(), nullable=False)
 
 
 class Films(Base):
     __tablename__ = 'Films'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(20))
-    description = Column(String(1024))
-    studiofilms = relationship('StudioFilms', backref='Films')
-
-
-class StudioFilms(Base):
-    __tablename__ = 'StudiesFilm'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(20))
-    base_in = Column(Integer)
-    owners = Column(String(40))
-    film_id = Column(Integer, ForeignKey('Films.id'))
-
-    def __repr__(self):
-        return f'<Author: {self.age}>'
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(50), nullable=False)
+    description = Column(String(1024), nullable=False)
+    producer = Column(String(30), nullable=False)
+    created_at = Column(Integer(), nullable=False)

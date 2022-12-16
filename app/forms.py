@@ -26,7 +26,6 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     username = StringField(label='User Name:', validators=[Length(min=2, max=30), DataRequired()])
-    # email_address = StringField(label='Email Address:', validators=[Email(), DataRequired()])
     password = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
     submit = SubmitField(label='Login')
 
@@ -37,3 +36,19 @@ class AddBookForm(FlaskForm):
     author = StringField(label='Author:', validators=[Length(min=2, max=40), DataRequired()])
     created_at = IntegerField(label='Book release year:', validators=[DataRequired()])
     submit = SubmitField(label='Add Book')
+
+
+class AddFilmForm(FlaskForm):
+    title = StringField(label='Title:', validators=[Length(min=4, max=30), DataRequired()])
+    description = StringField(label='Description:', validators=[Length(min=1, max=1024), DataRequired()])
+    producer = StringField(label='Producer:', validators=[Length(min=2, max=40), DataRequired()])
+    created_at = IntegerField(label='Film release year:', validators=[DataRequired()])
+    submit = SubmitField(label='Add Film')
+
+
+class AddGameForm(FlaskForm):
+    title = StringField(label='Title:', validators=[Length(min=4, max=30), DataRequired()])
+    description = StringField(label='Description:', validators=[Length(min=1, max=1024), DataRequired()])
+    studio = StringField(label='Studio:', validators=[Length(min=2, max=40), DataRequired()])
+    created_at = IntegerField(label='Game release year:', validators=[DataRequired()])
+    submit = SubmitField(label='Add Game')

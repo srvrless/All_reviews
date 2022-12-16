@@ -7,6 +7,8 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
+
+
 dotenv.load_dotenv()
 db = SQLAlchemy()
 path = os.environ['DATABASE_URL']
@@ -21,12 +23,15 @@ def create_app():
 
     db.init_app(app)
     from .database import db_session, init_db
-    init_db()
 
+    init_db()
     db_session.commit()
+
     from .routes import main
+    from .authentication import auth
 
     app.register_blueprint(main)
+    app.register_blueprint(auth)
 
     login_manager = LoginManager()
     login_manager.init_app(app)
