@@ -2,12 +2,14 @@ import os
 import dotenv
 
 from flask import Flask
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
-
+from app.models import Game, Book, Films
 
 dotenv.load_dotenv()
 db = SQLAlchemy()
@@ -43,7 +45,10 @@ def create_app():
     def load_user(user_id):
         return db.session.query(User).get(user_id)
 
+    admin = Admin(app, name='All reviews', template_mode='bootstrap3')
+    admin.add_view(ModelView(User, db.session, name='User'))
+    admin.add_view(ModelView(Book, db.session, name='Book'))
+    admin.add_view(ModelView(Game, db.session, name='Game'))
+    admin.add_view(ModelView(Films, db.session, name='Film'))
+
     return app
-
-
-from app import models

@@ -1,8 +1,9 @@
 from flask import Flask
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 
 app = Flask(__name__)
@@ -28,12 +29,6 @@ class User(Base, UserMixin):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
 
-    def can_purchase(self, item_obj):
-        return self.budget >= item_obj.price
-
-    def can_sell(self, item_obj):
-        return item_obj in self.items
-
 
 class Book(Base):
     __tablename__ = 'Book'
@@ -41,6 +36,7 @@ class Book(Base):
     title = Column(String(50), nullable=False)
     description = Column(String(1024), nullable=False)
     author = Column(String(30), nullable=False)
+    rating = Column(Integer(), nullable=False, default=0)
     created_at = Column(Integer(), nullable=False)
 
 
@@ -50,13 +46,35 @@ class Game(Base):
     title = Column(String(50), nullable=False)
     description = Column(String(1024), nullable=False)
     studio = Column(String(30), nullable=False)
+    rating = Column(Integer(), nullable=False, default=0)
     created_at = Column(Integer(), nullable=False)
 
 
 class Films(Base):
-    __tablename__ = 'Films'
+    __tablename__ = 'Film'
     id = Column(Integer(), primary_key=True)
     title = Column(String(50), nullable=False)
     description = Column(String(1024), nullable=False)
     producer = Column(String(30), nullable=False)
+    rating = Column(Integer(), nullable=False, default=0)
     created_at = Column(Integer(), nullable=False)
+
+# class Rating_For_Books(Base):
+#     __tablename__ = 'Star_Rating_Books'
+#     # product_id = Column(ForeignKey(Film))
+#     product_id = Column(Integer(), nullable=False)
+#     user_id = Column(Integer(), nullable=False)
+#     rating = Column(Integer(), nullable=False, default=1, primary_key=('product_id', 'user_id'))
+#
+# class Rating_For_Games(Base):
+#     __tablename__ = 'Star_Rating_Games'
+#     product_id = Column(Integer(), nullable=False)
+#     user_id = Column(Integer(), nullable=False)
+#     rating = Column(Integer(), nullable=False, default=1, primary_key=('product_id', 'user_id'))
+#
+#
+# class Rating_For_Films(Base):
+#     __tablename__ = 'Star_Rating_Films'
+#     product_id = Column(Integer(), nullable=False)
+#     user_id = Column(Integer(), nullable=False)
+#     rating = Column(Integer(), nullable=False, default=1, primary_key=('product_id', 'user_id'))

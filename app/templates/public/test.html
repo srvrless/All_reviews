@@ -1,0 +1,30 @@
+<!-- (A) DUMMY PRODUCT -->
+<div class="product">
+  <img class="img" src="static/1.png">
+  <div class="name">Hamborger</div>
+  <div class="desc">Piece of meat and veggies with 2 pieces of bun.</div>
+<!--  <div class="avg">Rating: {{ astar[0] }} ({{ astar[1] }} users)</div>-->
+  <div class="rate">Your rating: <div id="demo"></div></div>
+</div>
+
+<!-- (B) INIT STAR RATING -->
+<script>
+starry({
+  target: document.getElementById("demo"),
+  max: 5,
+  now: {{ ustar }},
+  click : stars => {
+    let data = new FormData();
+    data.append("stars", stars);
+    fetch("/save/", {
+      method: "post",
+      body: data
+    })
+    .then(res => res.text())
+    .then(txt => {
+      if (txt == "OK") { location.reload(); }
+      else { alert(txt); }
+    });
+  }
+});
+</script>

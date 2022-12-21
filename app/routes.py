@@ -1,35 +1,44 @@
 from flask import render_template, Blueprint, redirect, url_for, flash
+
+from app import db
 from app.forms import AddBookForm, AddFilmForm, AddGameForm
 from app.models import Book, Films, Game
-from app import db
 
 main = Blueprint("main", __name__)
 
 
 @main.route('/')
-@main.route("/home", methods=['GET', 'POST'])
+@main.route("/welcome")
+def welcome_page():
+    return render_template('public/welcome.html')
+
+
+@main.route("/all_reviews", methods=['GET', 'POST'])
 # @login_required
 def home_page():
-    return render_template('public/Base.html')
+    return render_template('public/all_reviews.html')
 
 
 @main.route("/games")
 def games_page():
-    return render_template('public/games.html')
+    games = db.session.query(Game).all()
+    return render_template('public/game.html', games=games)
 
 
 @main.route("/books")
 def books_page():
-    return render_template('public/books.html')
+    books = db.session.query(Book).all()
+    return render_template('public/book.html', books=books)
 
 
 @main.route("/films")
 def films_page():
-    return render_template('public/films.html')
+    films = db.session.query(Films).all()
+    return render_template('public/film.html', films=films)
 
 
-@main.route('/add/book', methods=['GET', 'POST'])
-def add_book():
+@main.route('/add/Book', methods=['GET', 'POST'])
+def add_Book():
     form = AddBookForm()
     if form.validate_on_submit():
         Book_create = Book(title=form.title.data,
@@ -45,9 +54,9 @@ def add_book():
 
     if form.errors != {}:
         for err_msg in form.errors.values():
-            flash(f'There was an error with creating a book: {err_msg}', category='danger')
+            flash(f'There was an error with creating a Book: {err_msg}', category='danger')
 
-    return render_template('admin/add_book.html', form=form)
+    return render_template('admin/add_Book.html', form=form)
 
 
 @main.route('/add/film', methods=['GET', 'POST'])
@@ -91,4 +100,9 @@ def add_game():
         for err_msg in form.errors.values():
             flash(f'There was an error with creating a Game: {err_msg}', category='danger')
 
-    return render_template('admin/create_book.html', form=form)
+    return render_template('admin/create_Book.html', form=form)
+
+# @main.route('/uploads/<filename>')
+# def send_file(filename):
+#     from app import create_app
+#     return send_from_directory(create_app().config['UPLOAD_FOLDER'], filename)
