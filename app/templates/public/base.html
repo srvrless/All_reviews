@@ -7,6 +7,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
           integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="C:/Users/fedor/PycharmProjects/MyWorks/all_reviews/app/templates/public/static/font/css/font-awesome.min.css">
     <title>
         {% block title %}
         Home
@@ -39,6 +41,10 @@
         {% if current_user.is_authenticated %}
         <ul class="navbar-nav">
             <li class="nav-Book">
+                <a class="nav-link" href="{{ url_for('main.bookmark_page') }}"><i class="fa fa-star"
+                                                                                  aria-hidden="true"></i></a>
+            </li>
+            <li class="nav-Book">
                 <a class="nav-link">{{ current_user.username }}</a>
             </li>
             <li class="nav-Book">
@@ -70,6 +76,7 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
+
 {% block content %}
 
 {% endblock %}
@@ -88,6 +95,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/69e2443572.js" crossorigin="anonymous"></script>
 </body>
 <style>
       body {
@@ -97,5 +105,39 @@
 
 
 
+
+
+
+
+
+
 </style>
 </html>
+
+<footer class="site-footer bg-grey" style="margin-top:500px">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-sm-6 col-xs-12">
+                <p class="copyright-text">&copy; 2022 All rights reserved
+                    <a href="#">All Reviews</a>.
+                </p>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12 bg-grey">
+                <ul class="social-icons">
+                    <li><a class="facebook" href="https://github.com/DamnGachi"><i class="fa fa-github"></i></a></li>
+                    <li><a class="telegram" href="https://web.telegram.org/k/"><i class="fa fa-telegram"></i></a>
+                    </li>
+                    <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>

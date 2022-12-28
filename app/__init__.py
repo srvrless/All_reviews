@@ -9,7 +9,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
-from app.models import Game, Book, Films
+from app.models import Game, Book, Film
 
 dotenv.load_dotenv()
 db = SQLAlchemy()
@@ -22,6 +22,8 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = path
     app.config["SECRET_KEY"] = "FesC9cBSuxakv9yN0vBY"
+    UPLOAD_FOLDER = 'uploads'
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     db.init_app(app)
     from .database import db_session, init_db
@@ -49,6 +51,6 @@ def create_app():
     admin.add_view(ModelView(User, db.session, name='User'))
     admin.add_view(ModelView(Book, db.session, name='Book'))
     admin.add_view(ModelView(Game, db.session, name='Game'))
-    admin.add_view(ModelView(Films, db.session, name='Film'))
+    admin.add_view(ModelView(Film, db.session, name='Film'))
 
     return app

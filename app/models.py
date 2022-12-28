@@ -1,10 +1,11 @@
+from datetime import datetime
+
 from flask import Flask
-from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
 from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date, DateTime, func
 from flask_login import UserMixin
+from wtforms import DateTimeField
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -34,31 +35,50 @@ class Book(Base):
     __tablename__ = 'Book'
     id = Column(Integer(), primary_key=True)
     title = Column(String(50), nullable=False)
-    description = Column(String(1024), nullable=False)
+    description = Column(Text(), nullable=False)
     author = Column(String(30), nullable=False)
+    cover = Column(String(50), nullable=False, default='default.png')
     rating = Column(Integer(), nullable=False, default=0)
     created_at = Column(Integer(), nullable=False)
+    recently_edit = Column(DateTime(timezone=True),
+                           server_default=func.now())
+
+    def __repr__(self):
+        return f'<Book {self.title}>'
 
 
 class Game(Base):
     __tablename__ = 'Game'
     id = Column(Integer(), primary_key=True)
     title = Column(String(50), nullable=False)
-    description = Column(String(1024), nullable=False)
+    description = Column(Text(), nullable=False)
     studio = Column(String(30), nullable=False)
+    cover = Column(String(50), nullable=False, default='default.png')
     rating = Column(Integer(), nullable=False, default=0)
     created_at = Column(Integer(), nullable=False)
+    recently_edit = Column(DateTime(timezone=True),
+                           server_default=func.now())
 
 
-class Films(Base):
+class Film(Base):
     __tablename__ = 'Film'
     id = Column(Integer(), primary_key=True)
     title = Column(String(50), nullable=False)
-    description = Column(String(1024), nullable=False)
+    description = Column(Text(), nullable=False)
     producer = Column(String(30), nullable=False)
+    cover = Column(String(50), nullable=False, default='default.png')
     rating = Column(Integer(), nullable=False, default=0)
     created_at = Column(Integer(), nullable=False)
+    recently_edit = Column(DateTime(timezone=True),
+                           server_default=func.now())
 
+
+class Bookmark(Base):
+    __tablename__ = 'Bookmark'
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(50), nullable=False)
+    author = Column(Text(), nullable=False)
+    created_date = DateTimeField(default=datetime.now)
 # class Rating_For_Books(Base):
 #     __tablename__ = 'Star_Rating_Books'
 #     # product_id = Column(ForeignKey(Film))

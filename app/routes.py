@@ -1,8 +1,8 @@
-from flask import render_template, Blueprint, redirect, url_for, flash
+from flask import render_template, Blueprint, redirect, url_for, flash, send_from_directory, request
 
 from app import db
-from app.forms import AddBookForm, AddFilmForm, AddGameForm
-from app.models import Book, Films, Game
+from app.forms import AddBookForm, AddFilmForm, AddGameForm, AddBookmark
+from app.models import Book, Film, Game, Bookmark
 
 main = Blueprint("main", __name__)
 
@@ -31,10 +31,23 @@ def books_page():
     return render_template('public/book.html', books=books)
 
 
-@main.route("/films")
+@main.route("/film")
 def films_page():
-    films = db.session.query(Films).all()
-    return render_template('public/film.html', films=films)
+    film = db.session.query(Film).all()
+    return render_template('public/film.html', film=film)
+
+
+@main.route('/book/<int:book_id>/')
+def book(book_id):
+    book = db.session.query(Book).get_or_404(book_id)
+    url = request.args.get('url')
+    if url:
+        bookmark = Bookmark(url=url)
+        bookmark.fetch_image()
+        db.session.add(bookmark)
+        db.session.commit()
+        return redirect(url)
+    return render_template('public/includes/book_include.html', book=book)
 
 
 @main.route('/add/Book', methods=['GET', 'POST'])
@@ -63,10 +76,10 @@ def add_Book():
 def add_film():
     form = AddFilmForm()
     if form.validate_on_submit():
-        add_films = Films(title=form.title.data,
-                          description=form.description.data,
-                          producer=form.producer.data,
-                          created_at=form.created_at.data)
+        add_films = Film(title=form.title.data,
+                         description=form.description.data,
+                         producer=form.producer.data,
+                         created_at=form.created_at.data)
 
         db.session.add(add_films)
         db.session.commit()
@@ -102,7 +115,31 @@ def add_game():
 
     return render_template('admin/create_Book.html', form=form)
 
-# @main.route('/uploads/<filename>')
-# def send_file(filename):
-#     from app import create_app
-#     return send_from_directory(create_app().config['UPLOAD_FOLDER'], filename)
+
+@main.route('/uploads/<filename>')
+def send_file(filename):
+    from app import create_app
+    return send_from_directory(create_app().config['UPLOAD_FOLDER'], filename)
+
+
+@main.route('/bookmark', methods=['GET', 'POST'])
+def bookmark_page():
+    bookmarks = db.session.query(Bookmark).all()
+    return render_template('public/bookmark.html', bookmarks=bookmarks)
+
+
+@main.route('/bookmark/<id>/delete', methods=['GET', 'POST'])
+def bookmark_delete_page(id):
+    bookmark = get_object_or_404(Bookmark, id=id)
+    bookmark.delete_instance()
+    return redirect(url_for('bookmarks.list'))
+
+@main.route('/bookmark/add', methods=['GET', 'POST'])
+def bookmark_delete():
+    form = AddBookmark()
+    if form.validate_on_submit():
+        bookmark = Bookmark(title=form.title.data,
+                            author=form.author.data)
+        db.session.add(bookmark)
+        db.session.commit()
+    return

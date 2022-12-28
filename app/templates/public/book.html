@@ -4,27 +4,35 @@ Books
 {% endblock %}
 {% block content %}
 {% for book in books %}
+<style>
+.card-img-left {
+    width: 55%;
+    height: 17vw;
+    object-fit: cover;
+}
+
+
+</style>
 <div class="container mx- mt-4">
-    <div class="card-content">
-                <div class="card">
-          <div class="card-img">
-            <img class="card-img" src="{{ url_for('main.add_film', filename=book.cover) }}" alt="{{ book.cover }}">
-              <div class="overlay-content">
-              </div>
+    <div class="card-img-left">
+        <div class="card-img-left ">
+            <img class="card-img-left" src="{{ url_for('main.send_file', filename=book.cover) }}"
+                 alt="{{ book.cover }}">
+            <div class="overlay-content">
             </div>
-          </div>
-        <h2>{{ book.title }}</h2>
-        <p>{{ book.author }}</p>
-        <h2>{% set stars = book.rating | int %}
-            {% for n in range(stars) %}
-            <span class="fa fa-star checked" style="color:orange"></span>
-            {% endfor %}
-        </h2>
-        <div class="btn-wrapper text-center d-flex justify-content-between">
-            <button type="button" class="btn btn-info btn-sm">
-                <a href="#" style="color:white"><i class="fas fa-pen"></i> More info</a>
-            </button>
         </div>
+    </div>
+    <h4>{{ book.title }}</h4>
+    <p>{{ book.author }}</p>
+    <h4>{% set stars = book.rating | int %}
+        {% for n in range(stars) %}
+        <span class="fa fa-star checked" style="color:orange"></span>
+        {% endfor %}
+    </h4>
+    <div class="btn-wrapper text-center d-flex justify-content-between">
+        <button type="button" class="btn btn-info btn-sm">
+            <a href="{{ url_for('main.book', book_id=book.id) }}" style="color:white"><i class="fas fa-pen"></i> More info</a>
+        </button>
     </div>
 </div>
 {% endfor %}

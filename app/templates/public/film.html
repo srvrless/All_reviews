@@ -6,26 +6,19 @@ Films
 {% for film in films %}
 <div class="container mx- mt-4">
     <div class="card-content">
-<!--        <div class="card">-->
-<!--  <div class="card-img">-->
-<!--    <img class="card-img" src="{{ url_for('main.add_film', filename=book.cover) }}" alt="{{ book.cover }}">-->
-<!--      <div class="overlay-content">-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-      <h2>{{ film.title }}</h2>
-      <p>{{ film.author }}</p>
-      <h2>{% set stars = film.rating | int %}
-          {% for n in range(stars) %}
-          <span class="fa fa-star checked" style="color:orange"></span>
-          {% endfor %}
-       </h2>
-     <div class="btn-wrapper text-center d-flex justify-content-between">
-      <button type="button" class="btn btn-info btn-sm">
-       <a href="#" style="color:white"><i class="fas fa-pen"></i> More info</a>
-      </button>
-     </div>
-  </div>
+        <h2>{{ film.title }}</h2>
+        <p>{{ film.producer }}</p>
+        <h2>{% set stars = film.rating | int %}
+            {% for n in range(stars) %}
+            <span class="fa fa-star checked" style="color:orange"></span>
+            {% endfor %}
+        </h2>
+        <div class="btn-wrapper text-center d-flex justify-content-between">
+            <button type="button" class="btn btn-info btn-sm">
+                <a href="#" style="color:white"><i class="fas fa-pen"></i> More info</a>
+            </button>
+        </div>
+    </div>
 </div>
 {% endfor %}
 {% endblock %}

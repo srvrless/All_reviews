@@ -52,3 +52,8 @@ class AddGameForm(FlaskForm):
     studio = StringField(label='Studio:', validators=[Length(min=2, max=40), DataRequired()])
     created_at = IntegerField(label='Game release year:', validators=[DataRequired()])
     submit = SubmitField(label='Add Game')
+
+
+class AddBookmark(FlaskForm):
+    title = StringField(label='Title:', validators=[Length(min=4, max=30), DataRequired()])
+    author = StringField(label='Author:', validators=[Length(min=2, max=40), DataRequired()])
