@@ -3,21 +3,46 @@
 Films
 {% endblock %}
 {% block content %}
+<div class="flex-grow-1 d-flex">
+    <form method="POST" action="{{url_for ('main.search')}}"
+          class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+</div>
 {% for film in films %}
+<style>
+.card-img-left {
+    width: 55%;
+    height: 17vw;
+    object-fit: cover;
+}
+
+
+
+</style>
+
 <div class="container mx- mt-4">
-    <div class="card-content">
-        <h2>{{ film.title }}</h2>
-        <p>{{ film.producer }}</p>
-        <h2>{% set stars = film.rating | int %}
-            {% for n in range(stars) %}
-            <span class="fa fa-star checked" style="color:orange"></span>
-            {% endfor %}
-        </h2>
-        <div class="btn-wrapper text-center d-flex justify-content-between">
-            <button type="button" class="btn btn-info btn-sm">
-                <a href="#" style="color:white"><i class="fas fa-pen"></i> More info</a>
-            </button>
+    <div class="card-img-left">
+        <div class="card-img-left ">
+            <img class="card-img-left" src="{{ url_for('main.send_file', filename=film.cover) }}"
+                 alt="{{ film.cover }}">
+            <div class="overlay-content">
+            </div>
         </div>
+    </div>
+    <h4>{{ film.title }}</h4>
+    <p>{{ film.producer }}</p>
+    <h4>{% set stars = film.rating | int %}
+        {% for n in range(stars) %}
+        <span class="fa fa-star checked" style="color:orange"></span>
+        {% endfor %}
+    </h4>
+    <div class="btn-wrapper text-center d-flex justify-content-between">
+        <button type="button" class="btn btn-primary ">
+            <a href="{{ url_for('main.film', film_id=film.id) }}" style="color:white"><i class="fas fa-pen"></i> More
+                info</a>
+        </button>
     </div>
 </div>
 {% endfor %}

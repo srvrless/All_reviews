@@ -1,4 +1,9 @@
+
 <!doctype html>
+{% if current_user.is_authenticated %}
+ <meta http-equiv="Refresh" content="0; url='http://127.0.0.1:5000/all_reviews'" />
+
+{% else %}
 <html lang="en">
 <head>
     <!-- Required meta tags -->
@@ -13,6 +18,9 @@
         {% endblock %}
     </title>
 </head>
+
+
+
 <body>
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-grey" style="color:white">
         <div class="col-md-5 p-lg-5 mx-auto my-5">
@@ -43,3 +51,4 @@
 
 </style>
 </html>
+{% endif %}

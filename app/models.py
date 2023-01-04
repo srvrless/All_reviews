@@ -3,8 +3,9 @@ from datetime import datetime
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, func
 from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 from wtforms import DateTimeField
 
 app = Flask(__name__)
@@ -18,6 +19,7 @@ class User(Base, UserMixin):
     username = Column(String(length=30), nullable=False, unique=True)
     email_address = Column(String(length=50), nullable=False, unique=True)
     password_hash = Column(String(length=60), nullable=False)
+    bookmark = relationship('Bookmark', backref='owned_user', lazy=True)
 
     @property
     def password(self):
@@ -42,6 +44,7 @@ class Book(Base):
     created_at = Column(Integer(), nullable=False)
     recently_edit = Column(DateTime(timezone=True),
                            server_default=func.now())
+    bookmark = relationship('Bookmark', backref='owned_book', lazy=True)
 
     def __repr__(self):
         return f'<Book {self.title}>'
@@ -58,7 +61,7 @@ class Game(Base):
     created_at = Column(Integer(), nullable=False)
     recently_edit = Column(DateTime(timezone=True),
                            server_default=func.now())
-
+    bookmark = relationship('Bookmark', backref='owned_game', lazy=True)
 
 class Film(Base):
     __tablename__ = 'Film'
@@ -71,6 +74,7 @@ class Film(Base):
     created_at = Column(Integer(), nullable=False)
     recently_edit = Column(DateTime(timezone=True),
                            server_default=func.now())
+    bookmark = relationship('Bookmark', backref='owned_film', lazy=True)
 
 
 class Bookmark(Base):
@@ -79,22 +83,7 @@ class Bookmark(Base):
     title = Column(String(50), nullable=False)
     author = Column(Text(), nullable=False)
     created_date = DateTimeField(default=datetime.now)
-# class Rating_For_Books(Base):
-#     __tablename__ = 'Star_Rating_Books'
-#     # product_id = Column(ForeignKey(Film))
-#     product_id = Column(Integer(), nullable=False)
-#     user_id = Column(Integer(), nullable=False)
-#     rating = Column(Integer(), nullable=False, default=1, primary_key=('product_id', 'user_id'))
-#
-# class Rating_For_Games(Base):
-#     __tablename__ = 'Star_Rating_Games'
-#     product_id = Column(Integer(), nullable=False)
-#     user_id = Column(Integer(), nullable=False)
-#     rating = Column(Integer(), nullable=False, default=1, primary_key=('product_id', 'user_id'))
-#
-#
-# class Rating_For_Films(Base):
-#     __tablename__ = 'Star_Rating_Films'
-#     product_id = Column(Integer(), nullable=False)
-#     user_id = Column(Integer(), nullable=False)
-#     rating = Column(Integer(), nullable=False, default=1, primary_key=('product_id', 'user_id'))
+    owner = Column(Integer(), ForeignKey('User.id'))
+    book = Column(Integer(), ForeignKey('Book.id'))
+    game = Column(Integer(), ForeignKey('Game.id'))
+    film = Column(Integer(), ForeignKey('Film.id'))

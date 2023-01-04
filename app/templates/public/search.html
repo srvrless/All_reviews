@@ -1,0 +1,31 @@
+{% extends 'public/base.html' %}
+
+{% block content %}
+
+	<br/>
+	<h2>You Searched For: <em>{{ searched }}</em></h2>
+	
+	<br/>
+
+	{% if books %}
+
+	{% for book in books %}
+		<div class="shadow p-3 mb-5 bg-body rounded">
+	<h2><a href="{{ url_for('book', id=book.id)}}">{{ book.title }}</a></h2>
+	<small>By: {{ book.author }}<br/>
+	{{ book.created_at }}</small> <br/><br/>
+
+	{{ book.title|safe }}
+	<br/><br/>
+
+	{% endif %}
+
+	<br/><br/>
+</div>
+<br/>
+	{% endfor %}
+
+	{% else %}
+	Sorry, your search term: <strong>{{ searched }}</strong> was not found...
+	{% endif %}
+{% endblock %}

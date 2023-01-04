@@ -1,23 +1,48 @@
 {% extends 'public/base.html' %}
 {% block title %}
-Games
+games
 {% endblock %}
 {% block content %}
+<div class="flex-grow-1 d-flex">
+    <form method="POST" action="{{url_for ('main.search')}}"
+          class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+</div>
 {% for game in games %}
+<style>
+.card-img-left {
+    width: 55%;
+    height: 17vw;
+    object-fit: cover;
+}
+
+
+
+</style>
+
 <div class="container mx- mt-4">
-    <div class="card-content">
-        <h2>{{ game.title }}</h2>
-        <p>{{ game.studio }}</p>
-        <h2>{% set stars = game.rating | int %}
-            {% for n in range(stars) %}
-            <span class="fa fa-star checked" style="color:orange"></span>
-            {% endfor %}
-        </h2>
-        <div class="btn-wrapper text-center d-flex justify-content-between">
-            <button type="button" class="btn btn-info btn-sm">
-                <a href="#" style="color:white"><i class="fas fa-pen"></i> More info</a>
-            </button>
+    <div class="card-img-left">
+        <div class="card-img-left ">
+            <img class="card-img-left" src="{{ url_for('main.send_file', filename=game.cover) }}"
+                 alt="{{ game.cover }}">
+            <div class="overlay-content">
+            </div>
         </div>
+    </div>
+    <h4>{{ game.title }}</h4>
+    <p>{{ game.author }}</p>
+    <h4>{% set stars = game.rating | int %}
+        {% for n in range(stars) %}
+        <span class="fa fa-star checked" style="color:orange"></span>
+        {% endfor %}
+    </h4>
+    <div class="btn-wrapper text-center d-flex justify-content-between">
+        <button type="button" class="btn btn-primary ">
+            <a href="{{ url_for('main.game', game_id=game.id) }}" style="color:white"><i class="fas fa-pen"></i> More
+                info</a>
+        </button>
     </div>
 </div>
 {% endfor %}

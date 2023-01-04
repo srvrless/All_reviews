@@ -1,0 +1,54 @@
+{% extends 'public/base.html' %}
+
+{% block content %}
+<div class="container" style="margin-top:30px">
+    <div class="row">
+        <div class="col-sm-4">
+            <h4 class="heading">Biography Author</h4>
+            <div class="circle">
+                <span>Photo</span>
+            </div>
+            <div class="film">
+                <h5 class="mt-4">{{ film.producer}}</h5>
+                <p>Here is a short biography</p>
+                <h4 class="heading">About a Film «{{ film.title }}»</h4>
+                <p>Detailed information about the publication. Critics' reviews, reader reviews, awards and literary
+                    prizes.</p>
+            </div>
+            <div class="col-xs-12 sidebutton-wrapper">
+                <button type="button" class="btn btn-primary">Official site author</button>
+                <p></p>
+                <button type="button" class="btn btn-primary">Reader Reviews</button>
+                <p></p>
+                <button type="button" class="btn btn-primary">Illustrations and covers</button>
+            </div>
+            <hr class="d-sm-none">
+        </div>
+        <div class="col-sm-8">
+            <h1><i class="fa fa-film"></i> {{ film.title }} </h1>
+
+            <a class="btn btn-dark btn-sm" href="{{ url_for('main.bookmark_add_film', id=film.id, title=film.title, author=film.producer) }}"><h6>Add to favorite</h6></a>
+
+            <h6>{{ film.recently_edit.strftime('%d-%m-%Y') }}</h6>
+            <h4 class="heading">Моя оценка</h4>
+            <h6>{% set stars = film.rating | int %}
+                {% for n in range(stars) %}
+                <span class="fa fa-star checked" style="color:orange"></span>
+                {% endfor %}
+            </h6>
+
+            <div class="film-cover row justify-content-center  mb-4">
+                <a href="{{ url_for('main.send_file', filename=film.cover) }}"><img
+                        src="{{ url_for('main.send_file', filename=film.cover) }}" class="rounded mr-2"
+                        alt="Обложка {{ film.title }}"></a>
+            </div>
+            <div>
+            </div>
+            <h4 class="heading">Story</h4>
+            <div class="film-primary mb-4">
+                <p>{{ film.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

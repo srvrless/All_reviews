@@ -6,6 +6,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
@@ -24,8 +25,9 @@ def create_app():
     app.config["SECRET_KEY"] = "FesC9cBSuxakv9yN0vBY"
     UPLOAD_FOLDER = 'uploads'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+    migrate = Migrate(app, db)
     db.init_app(app)
+
     from .database import db_session, init_db
 
     init_db()

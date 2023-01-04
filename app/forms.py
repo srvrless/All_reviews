@@ -57,3 +57,8 @@ class AddGameForm(FlaskForm):
 class AddBookmark(FlaskForm):
     title = StringField(label='Title:', validators=[Length(min=4, max=30), DataRequired()])
     author = StringField(label='Author:', validators=[Length(min=2, max=40), DataRequired()])
+
+
+class SearchForm(FlaskForm):
+    searched = StringField("Searched", validators=[DataRequired()])
+    submit = SubmitField("Submit")

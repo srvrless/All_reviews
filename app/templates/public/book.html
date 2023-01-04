@@ -3,7 +3,15 @@
 Books
 {% endblock %}
 {% block content %}
+<div class="flex-grow-1 d-flex">
+    <form method="POST" action="{{url_for ('main.search')}}"
+          class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+</div>
 {% for book in books %}
+
 <style>
 .card-img-left {
     width: 55%;
@@ -12,7 +20,9 @@ Books
 }
 
 
+
 </style>
+
 <div class="container mx- mt-4">
     <div class="card-img-left">
         <div class="card-img-left ">
@@ -30,8 +40,9 @@ Books
         {% endfor %}
     </h4>
     <div class="btn-wrapper text-center d-flex justify-content-between">
-        <button type="button" class="btn btn-info btn-sm">
-            <a href="{{ url_for('main.book', book_id=book.id) }}" style="color:white"><i class="fas fa-pen"></i> More info</a>
+        <button type="button" class="btn btn-primary ">
+            <a href="{{ url_for('main.book', book_id=book.id) }}" style="color:white"><i class="fas fa-pen"></i> More
+                info</a>
         </button>
     </div>
 </div>

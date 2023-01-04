@@ -11,22 +11,24 @@
             <div class="book">
                 <h5 class="mt-4">{{ book.author }}</h5>
                 <p>Here is a short biography</p>
-                <h4 class="heading">About a Book «{{ book.title }}»</h4>
+                <h4 class="heading">About a book «{{ book.title }}»</h4>
                 <p>Detailed information about the publication. Critics' reviews, reader reviews, awards and literary
                     prizes.</p>
             </div>
             <div class="col-xs-12 sidebutton-wrapper">
-                <button type="button" class="btn btn-info">Official site author</button>
+                <button type="button" class="btn btn-primary">Official site author</button>
                 <p></p>
-                <button type="button" class="btn btn-info">Reader Reviews</button>
+                <button type="button" class="btn btn-primary">Reader Reviews</button>
                 <p></p>
-                <button type="button" class="btn btn-info">Illustrations and covers</button>
+                <button type="button" class="btn btn-primary">Illustrations and covers</button>
             </div>
             <hr class="d-sm-none">
         </div>
         <div class="col-sm-8">
             <h1><i class="fa fa-book"></i> {{ book.title }} </h1>
-            <a class="nav-link" href="{{ url_for('main.bookmark_page') }}"><h6>Add to favorite</h6></a>
+
+            <a class="btn btn-dark btn-sm" href="{{ url_for('main.bookmark_add_book', id=book.id, title=book.title, author=book.author) }}"><h6>Add to favorite</h6></a>
+
             <h6>{{ book.recently_edit.strftime('%d-%m-%Y') }}</h6>
             <h4 class="heading">Моя оценка</h4>
             <h6>{% set stars = book.rating | int %}
@@ -49,7 +51,7 @@
             <div>
             </div>
             <h4 class="heading">Story</h4>
-            <div class="book-info mb-4">
+            <div class="book-primary mb-4">
                 <p>{{ book.description }}</p>
             </div>
         </div>

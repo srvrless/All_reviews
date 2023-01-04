@@ -1,0 +1,25 @@
+{% extends 'public/base.html' %}
+{% block title %}
+Bookmark
+{% endblock %}
+{% block content %}
+
+{% for bookmark in bookmarks %}
+<div class="container mx- mt-4">
+    <h4>{{ bookmark.title }}</h4>
+    <p>{{ bookmark.author }}</p>
+        <div class="btn-wrapper text-center d-flex justify-content-start">
+        <button type="button" class="btn btn-info btn-sm">
+            <a href="{{ url_for('main.book', book_id=bookmark.book) }}" style="color:orange"><i class="fas fa-star"></i>
+            </a>
+        </button>
+        <h>-Warp on the book.</h>
+        <button type="button" class="btn btn-info btn-sm">
+            <a href="{{ url_for('main.bookmark_delete', id=bookmark.owner) }}" style="color:red"><i class="fa fa-trash"></i>
+            </a>
+        </button>
+        <h>-delete bookmark.</h>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,8 +1,10 @@
 from flask import render_template, Blueprint, redirect, url_for, flash, send_from_directory, request
+from flask_login import current_user
+from flask_peewee.utils import get_object_or_404
 
 from app import db
-from app.forms import AddBookForm, AddFilmForm, AddGameForm, AddBookmark
-from app.models import Book, Film, Game, Bookmark
+from app.forms import AddBookForm, AddFilmForm, AddGameForm, AddBookmark, SearchForm
+from app.models import Book, Film, Game, Bookmark, User
 
 main = Blueprint("main", __name__)
 
@@ -31,89 +33,28 @@ def books_page():
     return render_template('public/book.html', books=books)
 
 
-@main.route("/film")
+@main.route("/films")
 def films_page():
-    film = db.session.query(Film).all()
-    return render_template('public/film.html', film=film)
+    films = db.session.query(Film).all()
+    return render_template('public/film.html', films=films)
 
 
 @main.route('/book/<int:book_id>/')
 def book(book_id):
     book = db.session.query(Book).get_or_404(book_id)
-    url = request.args.get('url')
-    if url:
-        bookmark = Bookmark(url=url)
-        bookmark.fetch_image()
-        db.session.add(bookmark)
-        db.session.commit()
-        return redirect(url)
     return render_template('public/includes/book_include.html', book=book)
 
 
-@main.route('/add/Book', methods=['GET', 'POST'])
-def add_Book():
-    form = AddBookForm()
-    if form.validate_on_submit():
-        Book_create = Book(title=form.title.data,
-                           description=form.description.data,
-                           author=form.author.data,
-                           created_at=form.created_at.data)
-
-        db.session.add(Book_create)
-        db.session.commit()
-
-        flash('Successfully create a Book!', category='success')
-        return redirect(url_for('main.home_page'))
-
-    if form.errors != {}:
-        for err_msg in form.errors.values():
-            flash(f'There was an error with creating a Book: {err_msg}', category='danger')
-
-    return render_template('admin/add_Book.html', form=form)
+@main.route('/film/<int:film_id>/')
+def film(film_id):
+    film = db.session.query(Film).get_or_404(film_id)
+    return render_template('public/includes/film_include.html', film=film)
 
 
-@main.route('/add/film', methods=['GET', 'POST'])
-def add_film():
-    form = AddFilmForm()
-    if form.validate_on_submit():
-        add_films = Film(title=form.title.data,
-                         description=form.description.data,
-                         producer=form.producer.data,
-                         created_at=form.created_at.data)
-
-        db.session.add(add_films)
-        db.session.commit()
-
-        flash('Successfully add a new films!', category='success')
-        return redirect(url_for('main.home_page'))
-
-    if form.errors != {}:
-        for err_msg in form.errors.values():
-            flash(f'There was an error with creating a Film: {err_msg}', category='danger')
-
-    return render_template('admin/add_film.html', form=form)
-
-
-@main.route('/create/', methods=['GET', 'POST'])
-def add_game():
-    form = AddGameForm()
-    if form.validate_on_submit():
-        add_game = Game(title=form.title.data,
-                        description=form.description.data,
-                        studio=form.studio.data,
-                        created_at=form.created_at.data)
-
-        db.session.add(add_game)
-        db.session.commit()
-
-        flash('Successfully add a new Game!', category='success')
-        return redirect(url_for('main.home_page'))
-
-    if form.errors != {}:
-        for err_msg in form.errors.values():
-            flash(f'There was an error with creating a Game: {err_msg}', category='danger')
-
-    return render_template('admin/create_Book.html', form=form)
+@main.route('/game/<int:game_id>/')
+def game(game_id):
+    game = db.session.query(Game).get_or_404(game_id)
+    return render_template('public/includes/game_include.html', game=game)
 
 
 @main.route('/uploads/<filename>')
@@ -122,24 +63,75 @@ def send_file(filename):
     return send_from_directory(create_app().config['UPLOAD_FOLDER'], filename)
 
 
-@main.route('/bookmark', methods=['GET', 'POST'])
-def bookmark_page():
-    bookmarks = db.session.query(Bookmark).all()
-    return render_template('public/bookmark.html', bookmarks=bookmarks)
+@main.route('/bookmark_books', methods=['GET', 'POST'])
+def bookmark_books():
+    if current_user:
+        owner_id = current_user.id
+        bookmarks = db.session.query(Bookmark).filter_by(owner=owner_id, book=Bookmark.book).all()
+        return render_template('public/bookmark_book.html', bookmarks=bookmarks)
 
 
-@main.route('/bookmark/<id>/delete', methods=['GET', 'POST'])
-def bookmark_delete_page(id):
-    bookmark = get_object_or_404(Bookmark, id=id)
-    bookmark.delete_instance()
-    return redirect(url_for('bookmarks.list'))
+@main.route('/bookmark_games', methods=['GET', 'POST'])
+def bookmark_games():
+    if current_user:
+        owner_id = current_user.id
+        bookmarks = db.session.query(Bookmark).filter_by(owner=owner_id, game=Bookmark.game).all()
+        return render_template('public/bookmark_game.html', bookmarks=bookmarks)
 
-@main.route('/bookmark/add', methods=['GET', 'POST'])
-def bookmark_delete():
-    form = AddBookmark()
+
+@main.route('/bookmark_films', methods=['GET', 'POST'])
+def bookmark_films():
+    if current_user:
+        owner_id = current_user.id
+        bookmarks = db.session.query(Bookmark).filter_by(owner=owner_id, film=Bookmark.film).all()
+        return render_template('public/bookmark_film.html', bookmarks=bookmarks)
+
+
+@main.route('/bookmark/<int:id>/', methods=['GET', 'POST'])
+def bookmark_delete(id):
+    bookmark_del = db.session.query(Bookmark).filter_by(owner=id).first()
+    db.session.delete(bookmark_del)
+    db.session.commit()
+    return redirect(url_for('main.bookmark_books', owner=id))
+
+
+@main.route('/bookmark_book/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
+def bookmark_add_book(id, title, author):
+    bookmark = Bookmark(title=title, author=author, owner=current_user.id, book=id)
+    db.session.add(bookmark)
+    db.session.commit()
+    return redirect(url_for('main.bookmark_books'))
+
+
+@main.route('/bookmark_film/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
+def bookmark_add_film(id, title, author):
+    bookmark = Bookmark(title=title, author=author, owner=current_user.id, film=id)
+    db.session.add(bookmark)
+    db.session.commit()
+    return redirect(url_for('main.bookmark_books'))
+
+
+@main.route('/bookmark_game/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
+def bookmark_add_game(id, title, author):
+    bookmark = Bookmark(title=title, author=author, owner=current_user.id, game=id)
+    db.session.add(bookmark)
+    db.session.commit()
+    return redirect(url_for('main.bookmark_books'))
+
+
+@main.route('/search', methods=['POST'])
+def search():
+    form = SearchForm()
     if form.validate_on_submit():
-        bookmark = Bookmark(title=form.title.data,
-                            author=form.author.data)
-        db.session.add(bookmark)
-        db.session.commit()
-    return
+        posts = Book.query
+        if form.validate_on_submit():
+            # Get data from submitted form
+            book.searched = form.searched.data
+            # Query the Database
+            posts = posts.filter(Book.content.like('%' + Book.searched + '%'))
+            posts = posts.order_by(Book.title).all()
+
+            return render_template("public/search.html",
+                                   form=form,
+                                   searched=book.searched,
+                                   posts=posts)

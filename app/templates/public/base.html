@@ -21,6 +21,7 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
             <li class="nav-Book active">
@@ -33,15 +34,18 @@
             <li class="nav-Book">
                 <a class="nav-link" href="{{ url_for('main.films_page') }}">Films</a>
             </li>
+
             <li class="nav-Book">
                 <a class="nav-link" href="{{ url_for('main.books_page') }}">Books</a>
             </li>
 
         </ul>
+
         {% if current_user.is_authenticated %}
+
         <ul class="navbar-nav">
             <li class="nav-Book">
-                <a class="nav-link" href="{{ url_for('main.bookmark_page') }}"><i class="fa fa-star"
+                <a class="nav-link" href="{{ url_for('main.bookmark_books') }}"><i class="fa fa-star"
                                                                                   aria-hidden="true"></i></a>
             </li>
             <li class="nav-Book">
@@ -62,8 +66,13 @@
 
         </ul>
         {% endif %}
+
     </div>
+
 </nav>
+
+
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 {% for category, message in messages %}
@@ -102,6 +111,7 @@
       background-color: #212121;
       color: white
       }
+
 
 
 
