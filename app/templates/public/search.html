@@ -2,30 +2,34 @@
 
 {% block content %}
 
-	<br/>
-	<h2>You Searched For: <em>{{ searched }}</em></h2>
-	
-	<br/>
+<br/>
+<h2>You Searched For: <em>{{ searched }}</em></h2>
 
-	{% if books %}
+<br/>
 
-	{% for book in books %}
-		<div class="shadow p-3 mb-5 bg-body rounded">
-	<h2><a href="{{ url_for('book', id=book.id)}}">{{ book.title }}</a></h2>
-	<small>By: {{ book.author }}<br/>
-	{{ book.created_at }}</small> <br/><br/>
+{% if books %}
 
-	{{ book.title|safe }}
-	<br/><br/>
+{% for book in books %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h2><a href="{{ url_for('main.book', id=book.id)}}">{{ book.title }}</a></h2>
+    <small>By: {{ book.title }}<br/>
+        {{ book.created_at }}</small> <br/><br/>
 
-	{% endif %}
+    {{ book.title|safe }}
+    <br/><br/>
+    <a href="{{ url_for('book', id=book.id)}}" class="btn btn-outline-secondary btn-sm">View Post</a>
 
-	<br/><br/>
+    {% if book.book_id == current_user.id %}
+    <a href="{{ url_for('main.delete_book', id=book.id)}}" class="btn btn-outline-danger btn-sm">Delete Post</a>
+
+    {% endif %}
+
+    <br/><br/>
 </div>
 <br/>
-	{% endfor %}
+{% endfor %}
 
-	{% else %}
-	Sorry, your search term: <strong>{{ searched }}</strong> was not found...
-	{% endif %}
+{% else %}
+Sorry, your search term: <strong>{{ searched }}</strong> was not found...
+{% endif %}
 {% endblock %}

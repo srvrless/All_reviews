@@ -27,7 +27,7 @@
         <div class="col-sm-8">
             <h1><i class="fa fa-film"></i> {{ film.title }} </h1>
 
-            <a class="btn btn-dark btn-sm" href="{{ url_for('main.bookmark_add_film', id=film.id, title=film.title, author=film.producer) }}"><h6>Add to favorite</h6></a>
+            <a class="btn btn-dark btn-sm" href="{{ url_for('bookmark.add_film', id=film.id, title=film.title, author=film.producer) }}"><h6>Add to favorite</h6></a>
 
             <h6>{{ film.recently_edit.strftime('%d-%m-%Y') }}</h6>
             <h4 class="heading">Моя оценка</h4>

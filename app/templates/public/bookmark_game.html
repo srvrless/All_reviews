@@ -3,7 +3,24 @@
 Bookmark
 {% endblock %}
 {% block content %}
+<div class="flex-grow-1 d-flex">
+    <h1 class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">Bookmarks</h1>
+</div>
+<div class="flex-grow-1 d-flex">
+    <form method="POST" action="{{url_for ('bookmark.games')}} "
+          class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">
+    <button class="btn btn-primary" type="submit">Category game</button>
+    </form>
+    <form method="POST" action="{{url_for ('bookmark.books')}} "
+    class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">
+    <button class="btn btn-outline-primary" type="submit">Category book</button>
+    </form>
+    <form method="POST" action="{{url_for ('bookmark.films')}} "
+          class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">
+        <button class="btn btn-outline-primary" type="submit">Category film</button>
+    </form>
 
+</div>
 {% for bookmark in bookmarks %}
 <div class="container mx- mt-4">
     <h4>{{ bookmark.title }}</h4>
@@ -15,7 +32,7 @@ Bookmark
         </button>
         <h>-Warp on the book.</h>
         <button type="button" class="btn btn-info btn-sm">
-            <a href="{{ url_for('main.bookmark_delete', id=bookmark.owner) }}" style="color:red"><i class="fa fa-trash"></i>
+            <a href="{{ url_for('bookmark.delete_game', id=bookmark.owner,game_id=bookmark.game) }}" style="color:red"><i class="fa fa-trash"></i>
             </a>
         </button>
         <h>-delete bookmark.</h>

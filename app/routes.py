@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, redirect, url_for, flash, send_from_directory, request
 from flask_login import current_user
-from flask_peewee.utils import get_object_or_404
+
 
 from app import db
 from app.forms import AddBookForm, AddFilmForm, AddGameForm, AddBookmark, SearchForm
@@ -62,76 +62,24 @@ def send_file(filename):
     from app import create_app
     return send_from_directory(create_app().config['UPLOAD_FOLDER'], filename)
 
-
-@main.route('/bookmark_books', methods=['GET', 'POST'])
-def bookmark_books():
-    if current_user:
-        owner_id = current_user.id
-        bookmarks = db.session.query(Bookmark).filter_by(owner=owner_id, book=Bookmark.book).all()
-        return render_template('public/bookmark_book.html', bookmarks=bookmarks)
+@main.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
 
 
-@main.route('/bookmark_games', methods=['GET', 'POST'])
-def bookmark_games():
-    if current_user:
-        owner_id = current_user.id
-        bookmarks = db.session.query(Bookmark).filter_by(owner=owner_id, game=Bookmark.game).all()
-        return render_template('public/bookmark_game.html', bookmarks=bookmarks)
-
-
-@main.route('/bookmark_films', methods=['GET', 'POST'])
-def bookmark_films():
-    if current_user:
-        owner_id = current_user.id
-        bookmarks = db.session.query(Bookmark).filter_by(owner=owner_id, film=Bookmark.film).all()
-        return render_template('public/bookmark_film.html', bookmarks=bookmarks)
-
-
-@main.route('/bookmark/<int:id>/', methods=['GET', 'POST'])
-def bookmark_delete(id):
-    bookmark_del = db.session.query(Bookmark).filter_by(owner=id).first()
-    db.session.delete(bookmark_del)
-    db.session.commit()
-    return redirect(url_for('main.bookmark_books', owner=id))
-
-
-@main.route('/bookmark_book/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
-def bookmark_add_book(id, title, author):
-    bookmark = Bookmark(title=title, author=author, owner=current_user.id, book=id)
-    db.session.add(bookmark)
-    db.session.commit()
-    return redirect(url_for('main.bookmark_books'))
-
-
-@main.route('/bookmark_film/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
-def bookmark_add_film(id, title, author):
-    bookmark = Bookmark(title=title, author=author, owner=current_user.id, film=id)
-    db.session.add(bookmark)
-    db.session.commit()
-    return redirect(url_for('main.bookmark_books'))
-
-
-@main.route('/bookmark_game/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
-def bookmark_add_game(id, title, author):
-    bookmark = Bookmark(title=title, author=author, owner=current_user.id, game=id)
-    db.session.add(bookmark)
-    db.session.commit()
-    return redirect(url_for('main.bookmark_books'))
-
-
-@main.route('/search', methods=['POST'])
+@main.route('/search', methods=['GET', 'POST'])
 def search():
     form = SearchForm()
+    posts = db.session.query(Book)
     if form.validate_on_submit():
-        posts = Book.query
-        if form.validate_on_submit():
-            # Get data from submitted form
-            book.searched = form.searched.data
-            # Query the Database
-            posts = posts.filter(Book.content.like('%' + Book.searched + '%'))
-            posts = posts.order_by(Book.title).all()
+        # Get data from submitted form
+        book_searched = form.searched.data
+        # Query the Database
+        posts = posts.filter(Book.title.like('%' + book_searched + '%')).all()
+        # posts = posts.order_by(Book.title).all()
 
-            return render_template("public/search.html",
-                                   form=form,
-                                   searched=book.searched,
-                                   posts=posts)
+        return render_template("public/search.html",
+                               form=form,
+                               searched=book_searched,
+                               posts=posts)

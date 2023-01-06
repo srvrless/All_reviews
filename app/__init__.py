@@ -35,9 +35,11 @@ def create_app():
 
     from .routes import main
     from .authentication import auth
+    from .bookmarks import bookmark
 
     app.register_blueprint(main)
     app.register_blueprint(auth)
+    app.register_blueprint(bookmark)
 
     login_manager = LoginManager()
     login_manager.init_app(app)

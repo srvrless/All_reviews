@@ -1,18 +1,19 @@
-FROM python:3.10
-
+FROM python:3.10-alpine
+LABEL "Mars"='SpaceX'
+LABEL "By"='Hiko'
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
 ENV FLASK_APP run.py
 ENV DEBUG True
 
+WORKDIR C:/Users/fedor/PycharmProjects/MyWorks/all_reviews
+
 COPY requirements.txt .
 
-# install python dependencies
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
 
-COPY env.sample .env
+# install python dependencies
+RUN apk update && apk upgrade && apk add bash
+RUN pip3 install -r requirements.txt
+
 
 COPY . .
 

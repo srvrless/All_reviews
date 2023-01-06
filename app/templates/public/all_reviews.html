@@ -4,12 +4,16 @@ All Reviews
 {% endblock %}
 {% block content %}
 
-        <div class="flex-grow-1 d-flex">
-            <form method="POST" action="{{url_for ('main.search')}}" class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1" >
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-primary" type="submit">Search</button>
-            </form>
-        </div>
+<div class="flex-grow-1 d-flex">
+
+    <form method="POST" action="{{url_for ('main.search')}} "
+          class="form-inline flex-nowrap bg-grey mx-0 mx-lg-auto rounded p-1">
+            {{ form.hidden_tag() }}
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+</div>
+
 <div class="row" style="margin-top:30px; margin-left:580px">
     <div class="col-6 text-center">
         <h2>Most commented category</h2>
