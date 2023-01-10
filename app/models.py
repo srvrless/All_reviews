@@ -45,6 +45,7 @@ class Book(Base):
     recently_edit = Column(DateTime(timezone=True),
                            server_default=func.now())
     bookmark = relationship('Bookmark', backref='owned_book', lazy=True)
+    book_rating = relationship('RatingBook', backref='book_rating', lazy=True)
 
     def __repr__(self):
         return f'<Book {self.title}>'
@@ -62,6 +63,8 @@ class Game(Base):
     recently_edit = Column(DateTime(timezone=True),
                            server_default=func.now())
     bookmark = relationship('Bookmark', backref='owned_game', lazy=True)
+    game_rating = relationship('RatingGame', backref='game_rating', lazy=True)
+
 
 class Film(Base):
     __tablename__ = 'Film'
@@ -75,6 +78,7 @@ class Film(Base):
     recently_edit = Column(DateTime(timezone=True),
                            server_default=func.now())
     bookmark = relationship('Bookmark', backref='owned_film', lazy=True)
+    film_rating = relationship('RatingFilm', backref='film_rating', lazy=True)
 
 
 class Bookmark(Base):
@@ -87,3 +91,36 @@ class Bookmark(Base):
     book = Column(Integer(), ForeignKey('Book.id'))
     game = Column(Integer(), ForeignKey('Game.id'))
     film = Column(Integer(), ForeignKey('Film.id'))
+
+
+class RatingGame(Base):
+    __tablename__ = 'RatingGame'
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(50), nullable=False)
+    rating = Column(Integer(), nullable=False)
+    created_date = DateTimeField(default=datetime.now)
+    review = Column(String(5000), nullable=True)
+    owner = Column(Integer(), ForeignKey('User.id'))
+    game_id = Column(Integer(), ForeignKey('Game.id'))
+
+
+class RatingFilm(Base):
+    __tablename__ = 'RatingFilm'
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(50), nullable=False)
+    review = Column(String(5000), nullable=True)
+    rating = Column(Integer(), nullable=False)
+    created_date = DateTimeField(default=datetime.now)
+    owner = Column(Integer(), ForeignKey('User.id'))
+    film_id = Column(Integer(), ForeignKey('Film.id'))
+
+
+class RatingBook(Base):
+    __tablename__ = 'RatingBook'
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(50), nullable=False)
+    review = Column(String(5000), nullable=True)
+    rating = Column(Integer(), nullable=False)
+    created_date = DateTimeField(default=datetime.now)
+    owner = Column(Integer(), ForeignKey('User.id'))
+    book_id = Column(Integer(), ForeignKey('Book.id'))

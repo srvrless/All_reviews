@@ -1,5 +1,6 @@
 FROM python:3.10-alpine
-LABEL "Mars"='SpaceX'
+FROM ubuntu:20.04
+
 LABEL "By"='Hiko'
 # set environment variables
 ENV FLASK_APP run.py
@@ -11,15 +12,14 @@ COPY requirements.txt .
 
 
 # install python dependencies
-RUN apk update && apk upgrade && apk add bash
-RUN pip3 install -r requirements.txt
+RUN apt-get update && apt-get -y install sudo
+RUN sudo apt-get -y install libpq-dev python3-dev && apt-get -y install python3-pip
+RUN #pip3 install psycopg2
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
 
 COPY . .
 
-RUN flask db init
-RUN flask db migrate
-RUN flask db upgrade
-
 # gunicorn
-CMD ["gunicorn", "--config", "gunicorn-cfg.py", "run:app"]
+CMD ["gunicorn", "--config", "gunicorn-cfg.py", "run:create_app()"]
