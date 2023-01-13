@@ -62,3 +62,21 @@ class AddBookmark(FlaskForm):
 class SearchForm(FlaskForm):
     searched = StringField("Searched", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+class ReviewFilm(FlaskForm):
+    description_review = StringField(label='desc:', validators=[Length(max=5000), DataRequired()])
+    rating = IntegerField(label='rating:', validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+class ReviewGame(FlaskForm):
+    description_review = StringField(label='desc:', validators=[Length(max=5000), DataRequired()])
+    rating = IntegerField(label='rating:', validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+class ReviewBook(FlaskForm):
+    description_review = StringField(label='desc:', validators=[Length(max=5000), DataRequired()])
+    rating = IntegerField(label='rating:', validators=[DataRequired()])
+    submit = SubmitField("Submit")

@@ -1,0 +1,36 @@
+{% extends 'public/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card-header">
+        Update Profile
+    </div>
+    <div class="card-body">
+
+        <form action="/profile_update" method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+
+
+            <br/>
+            {{ form.username.label(class="form-label") }}
+
+            {{ form.username(class="form-control", value=name_to_update.username) }}
+            <br/>
+
+            {{ form.email_address.label(class="form-label") }}
+
+            {{ form.email_address(class="form-control", value=name_to_update.email_address) }}
+            <br/>
+
+            {{ form.submit(class="btn btn-secondary btn-sm") }}
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+{% endblock %}

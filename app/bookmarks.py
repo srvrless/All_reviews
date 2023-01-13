@@ -1,5 +1,6 @@
 from flask_login import current_user
-from flask import render_template, redirect, url_for, Blueprint
+from flask import render_template, redirect, url_for, Blueprint, flash
+from marshmallow import ValidationError
 
 from app import db
 from app.models import Bookmark
@@ -57,23 +58,38 @@ def delete_film(id, film_id):
 
 @bookmark.route('/bookmark_book/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
 def add_book(id, title, author):
-    bookmark = Bookmark(title=title, author=author, owner=current_user.id, book=id)
-    db.session.add(bookmark)
-    db.session.commit()
-    return redirect(url_for('bookmark.books'))
+    book = db.session.query(Bookmark).filter_by(book=id).first()
+    if not book:
+        bookmark = Bookmark(title=title, author=author, owner=current_user.id, book=id)
+        db.session.add(bookmark)
+        db.session.commit()
+        flash(f'Bookmark create!', category='success')
+        return redirect(url_for('bookmark.books'))
+    flash(f'Bookmark is  already exist', category='danger')
+    return redirect(url_for('main.films_page'))
 
 
 @bookmark.route('/bookmark_film/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
 def add_film(id, title, author):
-    bookmark = Bookmark(title=title, author=author, owner=current_user.id, film=id)
-    db.session.add(bookmark)
-    db.session.commit()
-    return redirect(url_for('bookmark.books'))
+    film = db.session.query(Bookmark).filter_by(film=id).first()
+    if not film:
+        bookmark = Bookmark(title=title, author=author, owner=current_user.id, film=id)
+        db.session.add(bookmark)
+        db.session.commit()
+        flash(f'Bookmark create!', category='success')
+        return redirect(url_for('bookmark.books'))
+    flash(f'Bookmark is  already exist', category='danger')
+    return redirect(url_for('main.films_page'))
 
 
 @bookmark.route('/bookmark_game/<int:id>/<string:title>/<string:author>/', methods=['GET', 'POST'])
 def add_game(id, title, author):
-    bookmark = Bookmark(title=title, author=author, owner=current_user.id, game=id)
-    db.session.add(bookmark)
-    db.session.commit()
-    return redirect(url_for('bookmark.books'))
+    game = db.session.query(Bookmark).filter_by(game=id).first()
+    if not game:
+        bookmark = Bookmark(title=title, author=author, owner=current_user.id, game=id)
+        db.session.add(bookmark)
+        db.session.commit()
+        flash(f'Bookmark create!', category='success')
+        return redirect(url_for('bookmark.books'))
+    flash(f'Bookmark is  already exist', category='danger')
+    return redirect(url_for('main.games_page'))
