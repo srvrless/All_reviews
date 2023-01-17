@@ -18,7 +18,10 @@ class User(Base, UserMixin):
     id = Column(Integer(), primary_key=True)
     username = Column(String(length=30), nullable=False, unique=True)
     email_address = Column(String(length=50), nullable=False, unique=True)
+    date_added = Column(DateTime(timezone=True),
+                        server_default=func.now())
     password_hash = Column(String(length=60), nullable=False)
+    profile_pic = Column(String(50), nullable=False, default='default.png')
     bookmark = relationship('Bookmark', backref='owned_user', lazy=True)
 
     @property
@@ -110,7 +113,8 @@ class RatingFilm(Base):
     title = Column(String(50), nullable=False)
     review = Column(String(5000), nullable=True)
     rating = Column(Integer(), nullable=False)
-    created_date = DateTimeField(default=datetime.now)
+    recently_edit = Column(DateTime(timezone=True),
+                           server_default=func.now())
     owner = Column(Integer(), ForeignKey('User.id'))
     film_id = Column(Integer(), ForeignKey('Film.id'))
 
@@ -118,9 +122,9 @@ class RatingFilm(Base):
 class RatingBook(Base):
     __tablename__ = 'RatingBook'
     id = Column(Integer(), primary_key=True)
-    title = Column(String(50), nullable=False)
     review = Column(String(5000), nullable=True)
     rating = Column(Integer(), nullable=False)
-    created_date = DateTimeField(default=datetime.now)
-    owner = Column(Integer(), ForeignKey('User.id'))
+    recently_edit = Column(DateTime(timezone=True),
+                           server_default=func.now())
+    owner = Column(String(), ForeignKey('User.username'))
     book_id = Column(Integer(), ForeignKey('Book.id'))
