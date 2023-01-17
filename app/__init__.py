@@ -9,7 +9,6 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
-
 from app.models import Game, Book, Film
 
 dotenv.load_dotenv()
@@ -21,6 +20,7 @@ engine = create_engine(path, echo=True)
 def create_app():
     from .models import Base
     app = Flask(__name__)
+    app.config.from_pyfile('settings.py')
     app.config['SQLALCHEMY_DATABASE_URI'] = path
     app.config["SECRET_KEY"] = "FesC9cBSuxakv9yN0vBY"
     UPLOAD_FOLDER = 'uploads'
