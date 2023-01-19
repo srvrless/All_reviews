@@ -6,6 +6,12 @@ from app import db
 from app.models import User
 
 
+class RegisterContinueForm(FlaskForm):
+    password1 = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
+    password2 = PasswordField(label='Confirm Password:', validators=[EqualTo('password1'), DataRequired()])
+    submit = SubmitField(label='Create Account')
+
+
 class RegisterForm(FlaskForm):
     def validate_username(self, username_to_check):
         user = db.session.query(User).filter_by(username=username_to_check.data).first()
@@ -64,19 +70,7 @@ class SearchForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
-class ReviewFilm(FlaskForm):
-    description_review = StringField(label='desc:', validators=[Length(max=5000), DataRequired()])
-    rating = IntegerField(label='rating:', validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-
-class ReviewGame(FlaskForm):
-    description_review = StringField(label='desc:', validators=[Length(max=5000), DataRequired()])
-    rating = IntegerField(label='rating:', validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-
-class ReviewBook(FlaskForm):
+class ReviewFieldForm(FlaskForm):
     description_review = StringField(label='desc:', validators=[Length(max=5000), DataRequired()])
     rating = IntegerField(label='rating:', validators=[DataRequired()])
     submit = SubmitField("Submit")

@@ -10,19 +10,20 @@
 {% if books %}
 
 {% for book in books %}
-<div class="shadow p-3 mb-5 bg-body rounded">
-    <h2><a href="{{ url_for('main.book', book_id=book.id)}}">{{ book.title }}</a></h2>
-    <small>By: {{ book.title }}<br/>
-        {{ book.created_at }}</small> <br/><br/>
 
-    {{ book.title|safe }}
-    <br/><br/>
-    <a href="{{ url_for('main.book', book_id=book.id)}}" class="btn btn-outline-secondary btn-sm">View Post</a>
+    <div class="shadow p-3 mb-5">
+        <h2><a href="{{ url_for('main.book', book_id=book.id)}}">{{ book.title }}</a></h2>
+        <small>By: {{ book.title }}<br/>
+            {{ book.created_at }}</small> <br/><br/>
+
+        {{ book.title|safe }}
+        <br/><br/>
+        <a href="{{ url_for('main.book', book_id=book.id)}}" class="btn btn-outline-secondary btn-sm">View Post</a>
 
 
+        <br/><br/>
+    </div>
 
-    <br/><br/>
-</div>
 <br/>
 {% endfor %}
 

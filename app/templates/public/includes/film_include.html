@@ -27,7 +27,9 @@
         <div class="col-sm-8">
             <h1><i class="fa fa-film"></i> {{ film.title }} </h1>
 
-            <a class="btn btn-dark btn-sm" href="{{ url_for('bookmark.add_film', id=film.id, title=film.title, author=film.producer) }}"><h6>Add to favorite</h6></a>
+            <a class="btn btn-dark btn-sm"
+               href="{{ url_for('bookmark.add_film', id=film.id, title=film.title, author=film.producer) }}"><h6>Add to
+                favorite</h6></a>
 
             <h6>{{ film.recently_edit.strftime('%d-%m-%Y') }}</h6>
             <h4 class="heading">Моя оценка</h4>
@@ -50,5 +52,60 @@
             </div>
         </div>
     </div>
+    <div class="rating_container">
+        <!--        <div class="text-center">-->
+        <!--            {% for i in range(5) %}-->
+        <!--            <img src="{{ url_for('static',filename='images/rating.png') }}" width="35" height="35"-->
+        <!--                 id="star_{{i}}">-->
+        <!--            {% endfor %}-->
+        <!--            <div class="text-center">-->
+        <!--                <form method='POST' action="">-->
+        <!--                    <input type="hidden" id="rating_content" name='rating' value='0'>-->
+        <!--                    <input type="submit" id="submitbtn" class="btn btn-primary mt-1" value="Submit my Rating">-->
+        <!--                </form>-->
+        <!--            </div>-->
+        <form id="feedback" action="">
+            <div class="pinfo">Write your feedback.</div>
+            <script src="https://use.fontawesome.com/a6f0361695.js"></script>
+            <div class="form-group">
+                <div class="rating_container">
+                    <div class="text-center">
+                        {% for i in range(5) %}
+                        <img src="{{ url_for('static',filename='images/rating.png') }}" width="35" height="35"
+                             id="star_{{i}}">
+                        {% endfor %}
+                        <div class="text-center">
+                            <form method='POST' action="" class="form-review">
+                                {{ form.hidden_tag() }}
+                                <input type="hidden" id="rating_content" name='rating' value='0'>
+                                <span class="input-group-addon"><i class="fa fa-pencil"></i></span>
+                                <textarea class="form-control" id="description_review" rows="5"></textarea>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% for ratingbook in ratingbooks %}
+    <div class="container">
+        <!--        <a href="{{ url_for('main.book', book_id=book.id)}}"></a>-->
+        <h2>{{ ratingbook.owner }} </h2>{{
+        ratingbook.recently_edit }}
+        <h2>{% set stars = ratingbook.rating | int %}
+            {% for n in range(stars) %}
+            <span class="fa fa-star checked" style="color:orange"></span>
+            {% endfor %}
+        </h2>
+        <h5>{{ ratingbook.review|safe }}</h5>
+        <a href="{{ url_for('main.book', book_id=book.id)}}" class="btn btn-outline-secondary btn-sm">View Post</a>
+
+
+        <br/><br/>
+    </div>
+    <br/>
+    {% endfor %}
+
 </div>
 {% endblock %}

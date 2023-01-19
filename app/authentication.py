@@ -1,16 +1,21 @@
+import json
 import os
-import pathlib
-import requests
-import google.auth.transport.requests
+from functools import wraps
 
-from flask import flash, redirect, url_for, render_template, Blueprint, abort, session, request
+import httplib2
+from authlib.integrations.flask_client import OAuth
+from flask import flash, redirect, url_for, render_template, Blueprint, session, Flask, request, make_response
 from flask_login import login_user, login_required, logout_user
+from wtforms import ValidationError
+
 from app import db
-from google.oauth2 import id_token
-from google_auth_oauthlib.flow import Flow
-from app.forms import RegisterForm, LoginForm
+from app.forms import RegisterForm, LoginForm, RegisterContinueForm
 from app.models import User, bcrypt
-from pip._vendor import cachecontrol
+from dotenv import load_dotenv
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
+
+load_dotenv()
 
 auth = Blueprint("auth", __name__)
 
@@ -51,81 +56,107 @@ def login_page():
     return render_template('public/login.html', form=form)
 
 
-@auth.route('/logout', methods=['GET', 'POST'])
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('auth.login_page'))
-
-
-#
-#
-#
-#
-#
-# GOOGLE_CLIENT_ID = "<Add your own unique Google Client Id from the client_secret.json here>"
-# client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
-#
-# flow = Flow.from_client_secrets_file(
-#     client_secrets_file=client_secrets_file,
-#     scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
-#             "openid"],
-#     redirect_uri="http://localhost/callback"
-# )
-#
-#
-# def login_is_required(function):
-#     def wrapper(*args, **kwargs):
-#         if "google_id" not in session:
-#             return abort(401)  # Authorization required
-#         else:
-#             return function()
-#
-#     return wrapper
-#
-#
-# @auth.route("/login_google")
-# def login_google():
-#     authorization_url, state = flow.authorization_url()
-#     session["state"] = state
-#     return redirect(authorization_url)
-#
-#
-# @auth.route("/callback_google")
-# def callback_goole():
-#     flow.fetch_token(authorization_response=request.url)
-#
-#     if not session["state"] == request.args["state"]:
-#         abort(500)  # State does not match!
-#
-#     credentials = flow.credentials
-#     request_session = requests.session()
-#     cached_session = cachecontrol.CacheControl(request_session)
-#     token_request = google.auth.transport.requests.Request(session=cached_session)
-#
-#     id_info = id_token.verify_oauth2_token(
-#         id_token=credentials._id_token,
-#         request=token_request,
-#         audience=GOOGLE_CLIENT_ID
-#     )
-#
-#     session["google_id"] = id_info.get("sub")
-#     session["name"] = id_info.get("name")
-#     return redirect("/protected_area")
-#
-#
-# @auth.route("/logout")
+# @auth.route('/logout', methods=['GET', 'POST'])
+# @login_required
 # def logout():
-#     session.clear()
-#     return redirect("/")
-#
-#
-# @auth.route("/")
-# def index():
-#     return "Hello World <a href='/login'><button>Login</button></a>"
-#
-#
-# @auth.route("/protected_area")
-# @login_is_required
-# def protected_area():
-#     return f"Hello {session['name']}! <br/> <a href='/logout'><button>Logout</button></a>"
+#     logout_user()
+#     return redirect(url_for('auth.login_page'))
+
+
+app = Flask(__name__)
+oauth = OAuth(app)
+flow = oauth.register(
+    name='google',
+    client_id=os.environ["GOOGLE_CLIENT_ID"],
+    client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
+    client_kwargs={'scope': 'email profile'},
+    fetch_token='https://oauth2.googleapis.com/token',
+    server_metadata_url=f'https://accounts.google.com/.well-known/openid-configuration',
+)
+
+
+@auth.route('/register_google', methods=['GET', 'POST'])
+def register_google():
+    user = dict(session).get('profile', None)
+    # You would add a check here and usethe user id or something to fetch
+    # the other data for that user/check if they exist
+    if not user:
+        google = oauth.create_client('google')  # create the google oauth client
+        redirect_uri = url_for('auth.authorize_google', _external=True)
+        return google.authorize_redirect(redirect_uri)
+    return redirect('/all_reviews')
+
+
+@auth.route('/login_google', methods=['GET', 'POST'])
+def login_google():
+    user = dict(session).get('profile', None)
+    # You would add a check here and usethe user id or something to fetch
+    # the other data for that user/check if they exist
+
+    if not user:
+        google = oauth.create_client('google')  # create the google oauth client
+        redirect_uri = url_for('auth.authorize_google', _external=True)
+        return google.authorize_redirect(redirect_uri)
+    return redirect('/all_reviews')
+
+
+@auth.route('/authorize_google', methods=['GET', 'POST'])
+def authorize_google():
+    google = oauth.create_client('google')  # create the google oauth client
+    token = google.authorize_access_token()  # Access token from google (needed to get user info)
+    resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
+    user_info = resp.json()
+    user = oauth.google.userinfo()  #
+    session['profile'] = user_info
+    session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
+    return redirect('/login_google_user')
+
+
+@auth.route('/login_google_user', methods=['GET', 'POST'])
+def login_google_user():
+    username = dict(session)['profile']['name']
+    # You would add a check here and usethe user id or something to fetch
+    # the other data for that user/check if they exist
+    user = db.session.query(User).filter_by(username=username).first()
+    if user:
+        login_user(user)
+        flash(f'You are logged in', category='success')
+        return redirect(url_for('main.home_page'))
+    flash(f'There was an error with login a user: Wrong username or password', category='danger')
+
+
+@auth.route('/create_google_user', methods=['GET', 'POST'])
+def create_google_user():
+    email = dict(session)['profile']['email']
+    username = dict(session)['profile']['name']
+    print(email)
+    form = RegisterContinueForm()
+
+    if form.validate_on_submit():
+        user = db.session.query(User).filter_by(username=username).first()
+        if user:
+            raise ValidationError('Google account is already exist!')
+
+        user_google_create = User(username=username,
+                                  email_address=email,
+                                  password=form.password1.data)
+        db.session.add(user_google_create)
+        db.session.commit()
+        login_user(user_google_create)
+        flash(f"Account created successfully! You are now logged in as {user_google_create.username}",
+              category='success')
+        return redirect(url_for('main.home_page'))
+    return render_template('public/continue_register.html', form=form)
+
+
+@auth.route('/logout')
+def logout():
+    for key in list(session.keys()):
+        session.pop(key)
+    return redirect('/all_reviews')

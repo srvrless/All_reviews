@@ -6,6 +6,6 @@ RUN pip install --upgrade pip &&  python -m pip install -r requirements.txt
 
 COPY . /app
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD ['python','run.py']
