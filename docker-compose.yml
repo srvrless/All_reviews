@@ -8,7 +8,7 @@ services:
     container_name: flask_reviews
     command: gunicorn --bind 0.0.0.0:5000 run:create_app() # WSGI server
     environment:
-      - DATABASE_URL=postgresql://postgres:Daimondi12@db:5432/Flask_app # путь до бд, см. db service
+      - DATABASE_URL=postgresql://postgres:password@db:5432/Flask_app # путь до бд, см. db service
     expose:
       - 5000
     depends_on:
@@ -27,7 +27,7 @@ services:
       - db
     environment:
       - PGADMIN_DEFAULT_EMAIL=maijor18@mail.ru
-      - PGADMIN_DEFAULT_PASSWORD=Daimondi12 # если сменить здесь, то нужно удалить контентер
+      - PGADMIN_DEFAULT_PASSWORD=password # если сменить здесь, то нужно удалить контентер
       - PGADMIN_LISTEN_ADDRESS=0.0.0.0 # чтобы не было косяков с nginx лушче в одну сеть с app
       - PGADMIN_LISTEN_PORT=5555
   nginx:
