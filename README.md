@@ -1,5 +1,5 @@
 # **_All Reviews_**
-
+# RU
 ## Проект предназначен для пользователей которые думают что посмотреть сегодня вечером.
 
 ### На сайте вы можете найти свое кино, игру или книгу! Безусловно вам помогут в выборе отзывы, которые честные и неподкупные.
@@ -17,7 +17,21 @@
    * **gunicorn - для запуска на сервере**
 5. **Tools:**
    **Docker, Nginx, GitHub, DBeaver, Postman**
-
+# ENG
+## The project is intended for users who are thinking what to watch tonight.
+### On the site you can find your movie, game or book! Undoubtedly, reviews that are honest and incorruptible will help you in choosing.
+### Stack I used:
+1. **Frame - Flask**
+2. **Database - PostgreSQL**
+3. **Orm - sqlalchemy**
+4. **Libraries:**
+   * **bcrypt - to encrypt user passwords**
+   * **alembic (Flask-Mirgate) - for cleaning**
+   * **Flask Admin - For Dashboard**
+   * **google-auth - for user authorization/registration via google service**
+   * **pytest - testing**
+* **gunicorn - to run on the server**
+5. **Tools: Docker, Nginx, GitHub, DBeaver, Postman.**
 # Installation
 ### `pip install -r requirements.txt`
 # Author
