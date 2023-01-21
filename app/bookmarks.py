@@ -9,7 +9,7 @@ bookmark = Blueprint("bookmark", __name__)
 
 
 @bookmark.route('/bookmark_book', methods=['GET', 'POST'])
-def books():
+def books():  # main page bookmarks
     if current_user:
         owner_id = current_user.id
         bookmarks = db.session.query(Bookmark).filter_by(owner=owner_id, book=Bookmark.book).all()
@@ -34,7 +34,8 @@ def films():
 
 @bookmark.route('/bookmark_book/<int:id>/<int:book_id>/', methods=['GET', 'POST'])
 def delete_book(id, book_id):
-    bookmark_del = db.session.query(Bookmark).filter_by(owner=id, book=book_id).first()
+    bookmark_del = db.session.query(Bookmark).filter_by(owner=id,
+                                                        book=book_id).first()  # if owner == current owner id and book == book on page
     db.session.delete(bookmark_del)
     db.session.commit()
     return redirect(url_for('bookmark.books', owner=id, book=book_id))

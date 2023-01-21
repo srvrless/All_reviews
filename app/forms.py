@@ -5,7 +5,7 @@ from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationE
 from app import db
 from app.models import User
 
-
+# Google registration
 class RegisterContinueForm(FlaskForm):
     password1 = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
     password2 = PasswordField(label='Confirm Password:', validators=[EqualTo('password1'), DataRequired()])
@@ -13,6 +13,7 @@ class RegisterContinueForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
+    # check on duplicate data in database
     def validate_username(self, username_to_check):
         user = db.session.query(User).filter_by(username=username_to_check.data).first()
         if user:

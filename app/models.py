@@ -1,12 +1,14 @@
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from flask_jwt_extended import create_access_token
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, func, Table
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 from wtforms import DateTimeField
+
+from app.settings import Config
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -128,3 +130,44 @@ class RatingBook(Base):
                            server_default=func.now())
     owner = Column(String(), ForeignKey('User.username'))
     book_id = Column(Integer(), ForeignKey('Book.id'))
+
+
+association = Table('association', Base.metadata,
+                    Column('admin_id', Integer,
+                           ForeignKey('admins.id')),
+                    Column('role_id', Integer,
+                           ForeignKey('roles.id'))
+                    )
+
+
+class Admin(Base):
+    __tablename__ = 'admins'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False, unique=True)
+    password = Column(String(100), nullable=False)
+    roles = relationship('Role', secondary=association,
+                         back_populates='admins', lazy=True)
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.email = kwargs.get('email')
+        self.password = bcrypt.hash(
+            kwargs.get('password'),
+            salt=Config.ADMIN_PASSWD_SALT
+        )
+
+    def get_token(self, expire_time=24):
+        expire_delta = timedelta(expire_time)
+        token = create_access_token(
+            identity=self.id, expires_delta=expire_delta)
+        return token
+
+
+class Role(Base):
+    __tablename__ = 'roles'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    description = Column(String(500), nullable=False)
+    admins = relationship('Admin', secondary=association,
+                          back_populates='roles', lazy=True)

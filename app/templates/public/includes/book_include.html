@@ -93,7 +93,6 @@
     </div>
     {% for ratingbook in ratingbooks %}
     <div class="container">
-        <!--        <a href="{{ url_for('main.book', book_id=book.id)}}"></a>-->
         <h2>{{ ratingbook.owner }} </h2>{{
         ratingbook.recently_edit }}
         <h2>{% set stars = ratingbook.rating | int %}

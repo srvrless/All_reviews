@@ -40,13 +40,10 @@ def create_app():
     app.config.from_pyfile('settings.py')
     app.config['SQLALCHEMY_DATABASE_URI'] = path
     app.config["SECRET_KEY"] = "FesC9cBSuxakv9yN0vBY"
-    UPLOAD_FOLDER = 'uploads'
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     migrate = Migrate(app, db)
     db.init_app(app)
 
     from .database import db_session, init_db
-
     init_db()
     db_session.commit()
 
@@ -57,17 +54,17 @@ def create_app():
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(bookmark)
-
+    # Initialize LoginManager
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'login'
-    bcrypt = Bcrypt(app)
     from .models import User
 
     @login_manager.user_loader
     def load_user(user_id):
         return db.session.query(User).get(user_id)
 
+    # Admin Dashboard
     admin = Admin(app, name='All reviews', template_mode='bootstrap3')
     admin.add_view(ModelView(User, db.session, name='User'))
     admin.add_view(ModelView(Book, db.session, name='Book'))
