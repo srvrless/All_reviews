@@ -12,7 +12,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = 'FesC9cBSuxakv9yN0vBY'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    ADMIN_PASSWD_SALT = 'Daimondi12'
+    ADMIN_PASSWD_SALT = ''
 
 
 class ProductionConfig(Config):

@@ -1,5 +1,5 @@
 from flask import render_template, Blueprint, flash, send_from_directory, request
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from app import db
 from app.forms import SearchForm, ReviewFieldForm, RegisterForm
@@ -15,11 +15,11 @@ def welcome_page():
 
 
 @main.route("/all_reviews", methods=['GET', 'POST'])
-# @login_required
 def home_page():
     return render_template('public/all_reviews.html')
 
 # main screen page category
+
 
 @main.route("/games")
 def games_page():
@@ -28,18 +28,23 @@ def games_page():
 
 # main screen page category
 
+
 @main.route("/books")
 def books_page():
     books = db.session.query(Book).all()
     return render_template('public/book.html', books=books)
 
 # main screen page category
+
+
 @main.route("/films")
 def films_page():
     films = db.session.query(Film).all()
     return render_template('public/film.html', films=films)
 
 # More about the book
+
+
 @main.route('/book/<int:book_id>/', methods=['GET', 'POST'])
 def book(book_id):
     book = db.session.query(Book).get_or_404(book_id)
@@ -55,6 +60,8 @@ def book(book_id):
     return render_template('public/includes/book_include.html', book=book, form=form, ratingbooks=ratingbooks)
 
 # More about the film
+
+
 @main.route('/film/<int:film_id>/')
 def film(film_id):
     film = db.session.query(Film).get_or_404(film_id)
@@ -70,6 +77,8 @@ def film(film_id):
     return render_template('public/includes/film_include.html', film=film, form=form, ratingfilms=ratingfilms)
 
 # More about the game
+
+
 @main.route('/game/<int:game_id>/')
 def game(game_id):
     game = db.session.query(Game).get_or_404(game_id)
@@ -103,13 +112,9 @@ def base():
 def search():
     form = SearchForm()
     if form.validate_on_submit():
-        # Get data from submitted form
-        # author = request.form["author"]
         searched = form.searched.data
-        # search = "%{}%".format(searched)
-        # book = db.session.query(Book).filter(Book.author.like(search)).all()
-        # # Query the Database
-        books = db.session.query(Book).filter(Book.title.like('%' + searched + '%'))
+        books = db.session.query(Book).filter(
+            Book.title.like('%' + searched + '%'))
         books = books.order_by(Book.title).all()
         return render_template("public/search.html", form=form, searched=searched, books=books)
 
@@ -134,4 +139,3 @@ def profile_update_page():
     if form.validate_on_submit():
         db.session.merge(name_to_update)
     return render_template("public/update_profile.html", form=form)
-    # name_to_update=name_to_update
