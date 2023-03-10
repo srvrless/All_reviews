@@ -15,8 +15,7 @@
    * **google-auth - для авторизации/регистрации usera через гугл сервис**
    * **pytest - тестирование**
    * **gunicorn - для запуска на сервере**
-5. **Tools:**
-   **Docker, Nginx, GitHub, DBeaver, Postman**
+5.  **Deploy: Docker, Nginx**
 # ENG
 ## The project is intended for users who are thinking what to watch tonight.
 ### On the site you can find your movie, game or book! Undoubtedly, reviews that are honest and incorruptible will help you in choosing.
@@ -31,7 +30,7 @@
    * **google-auth - for user authorization/registration via google service**
    * **pytest - testing**
 * **gunicorn - to run on the server**
-5. **Tools: Docker, Nginx, GitHub, DBeaver, Postman.**
+5. **Deploy: Docker, Nginx**
 # Installation
 ### `pip install -r requirements.txt`
 # Author
